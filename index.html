@@ -1,168 +1,193 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-		<meta charset="utf-8" />
-		<title>Password</title>
-		<link href='http://fonts.googleapis.com/css?family=Allerta' rel='stylesheet' type='text/css'>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-		<style>
-			html, body {
-				margin: 0;
-				padding: 0;
-				width: 100%;
-				height: 100%;
-				font-family: Allerta;
-			}
-			section {
-				padding: 1em;
-			}
-			a {
-				color: white;
-				text-decoration: none;
-			}
-			a:hover {
-				text-decoration: underline;
-			}
-			input {
-				font-family: Allerta;
-			}
-			table {
-				margin-top: 1em;
-			}
-			table thead{
-				background-color: #65c9ff;
-			}
-			table th {
-				padding: .4em;
-			}
-			table td {
-				padding: .2em;
-			}
-			table tr:nth-child(even) {
-				background-color: #d4f1ff;
-			}
-			#raw_datas_close {
-				position: absolute;
-				top: 4em;
-				left: 50%;
-				min-width: 25em;
-				width: 40%;
-				margin-left: -20%;
-			}
-			#raw_datas {
-				position: absolute;
-				top: 6em;
-				left: 50%;
-				padding: 1em;
-				min-width: 25em;
-				width: 40%;
-				margin-left: -20%;
-				background: white;
-				border: black 1px solid;
-			}
-			#raw_datas_back {
-				display: none;
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: rgba(0,0,0,.8);
-			}
-		</style>
-	</head>
-	<body>
-		<section>
-		<p>Génération de mot de passe aleatoire et chiffrement en <strong>md5</strong>, <strong>crypt</strong> et <strong>sha1</strong>. Les mots de passe ne sont ni enregistrés ni diffusés.</p>
-		<form method="post">
-			<label for="length">taille</label>
-			<input type="number" name="length" id="length" value="8" min="4" max="32" size="2" >
-			<input type="submit" name="generer" id="action_generer" value="Génerer"><input type="submit" name="generer_10" id="action_generer_10" value="Génerer 10"><br>
-			
-			<label for="custom">custom</label>
-			<input type="text" name="custom" id="custom" value="Testez*M0i" >
-			<input type="submit" name="ajouter" id="action_ajouter" value="Ajouter"><br>
-			
-			<div id="raw_datas_back">
-				<div id="raw_datas"></div>
-				<a href="#" id="raw_datas_close">Fermer</a>
-			</div>
-			
-			<table id="password_list">
-				<thead>
-					<tr>
-						<th>password <a href="#" class="raw" data-column="clear">raw</a></th>
-						<th>md5 <a href="#" class="raw" data-column="md5">raw</a></th>
-						<th>crypt <a href="#" class="raw" data-column="crypt">raw</a></th>
-						<th>sha1 <a href="#" class="raw" data-column="sha1">raw</a></th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		</form>
-		</section>
-		<script>
-			(function($) {
-				$("#action_generer, #action_generer_10, #action_ajouter").die().live("click", function(event) {
-					event.preventDefault();
-					$.ajax({
-						type: "POST",
-						url: "ajax.php",
-						data: { action: $(this).attr("id"), length: $("#length").val(), custom: $("#custom").val() },
-						dataType: "json"
-					}).done(function( jsonres ) {
-						if (jsonres.succes) {
-							$("tbody","#password_list").append(jsonres.datas);
-						}
-					});
-				});
-				
-				$("#raw_datas, td").die().live("click", function(event) {
-					event.preventDefault();
-					selectText(this);
-				});
-				$("input[type=text]").die().live("click", function(event) {
-					event.preventDefault();
-					$(this).select();
-				});
-				
-				$(".raw").die().live("click", function(event) {
-					event.preventDefault();
-					var raw = $("."+$(this).data("column"), "#password_list").map(function() {
-						return $(this).text();
-					}).get().join("<br>");
-					$("#raw_datas").html(raw);
-					$("#raw_datas_back").show();
-					selectText($("#raw_datas")[0]);
-				});
-				
-				$("#raw_datas_close").die().live("click", function(event) {
-					event.preventDefault();
-					$("#raw_datas_back").hide();
-					selection.removeAllRanges();
-				});
-				
-				if ($("#password_list").find("td").length == 0) {
-					$("#action_generer").trigger("click");
-				}
-			})(jQuery);
-			
-			function selectText(text) {
-			    var range, selection;
-			    
-			    if (document.body.createTextRange) { //ms
-			        range = document.body.createTextRange();
-			        range.moveToElementText(text);
-			        range.select();
-			    } else if (window.getSelection) { //all others
-			        selection = window.getSelection();
-			        range = document.createRange();
-			        range.selectNodeContents(text);
-			        selection.removeAllRanges();
-			        selection.addRange(range);
-			    }
-			}
-		</script>
-	</body>
+<head>
+    <meta charset="utf-8"/>
+    <title>Password</title>
+    <link href='http://fonts.googleapis.com/css?family=Allerta' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+
+    <style>
+        body, input {
+            font-family: Allerta;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <form method="post" action="ajax.php">
+            <div class="col s10">
+                <p>Génération de mot de passe aleatoire et chiffrement en <strong>md5</strong>, <strong>crypt</strong>
+                    et <strong>sha1</strong>.
+                    <br>Les mots de passe ne sont ni enregistrés ni diffusés.</p>
+
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input type="number" name="length" id="length" class="active" value="8" min="1" max="128">
+                        <label for="length">taille</label>
+                    </div>
+
+                    <div class="input-field col s6">
+                        <input type="button" name="generate" value="Generer" class="btn">
+                        <input type="button" name="generate10" value="Generer 10" class="btn">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input type="text" name="custom" id="custom" value="Testez*M0i">
+                        <label for="custom">personaliser</label>
+                    </div>
+
+                    <div class="input-field col s6">
+                        <input type="button" name="encode" value="Encoder" class="btn">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col s2">
+                <p>Options</p>
+                <div>
+                    <input type="checkbox" name="option_upper" id="upper" checked class="filled-in">
+                    <label for="upper">ABC</label>
+                </div>
+                <div>
+                    <input type="checkbox" name="option_lower" id="lower" checked class="filled-in">
+                    <label for="lower">abc</label>
+                </div>
+                <div>
+                    <input type="checkbox" name="option_digits" id="digits" checked class="filled-in">
+                    <label for="digits">123</label>
+                </div>
+                <div>
+                    <input type="checkbox" name="option_special" id="special" class="filled-in">
+                    <label for="special">!@#</label>
+                </div>
+                <div>
+                    <input type="checkbox" name="option_brackets" id="brackets" class="filled-in">
+                    <label for="brackets">({<</label>
+                </div>
+                <div>
+                    <input type="checkbox" name="option_high" id="high" class="filled-in">
+                    <label for="high">äæ±</label>
+                </div>
+                <div>
+                    <input type="checkbox" name="option_ambiguous" id="ambiguous" class="filled-in">
+                    <label for="ambiguous">O0o</label>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <table class="striped">
+        <thead>
+        <tr>
+            <th>password</th>
+            <th>md5</th>
+            <th>crypt</th>
+            <th>sha1
+                <button type="button" class="btn right" data-action="clear">Vider</button>
+            </th>
+        </tr>
+        </thead>
+        <tbody data-container="password">
+        <tr data-template="password">
+            <td data-text="password"></td>
+            <td data-text="md5"></td>
+            <td data-text="crypt"></td>
+            <td data-text="sha1"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+<script>
+    $.fn.serializeObject = function () {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function () {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+
+    function selectText(text) {
+        var range, selection;
+
+        if (document.body.createTextRange) { //ms
+            range = document.body.createTextRange();
+            range.moveToElementText(text);
+            range.select();
+        } else if (window.getSelection) { //all others
+            selection = window.getSelection();
+            range = document.createRange();
+            range.selectNodeContents(text);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    }
+
+    (function ($) {
+
+        var addEvent = function() {
+            $('td').off('click').on('click', function () {
+                selectText(this);
+            });
+        };
+
+        var $passwordContainer = $('[data-container="password"]'),
+            $passwordTemplate = $('[data-template="password"]');
+
+        $passwordTemplate.remove();
+        $('input[type=button]').on('click', function (e) {
+            e.preventDefault();
+
+            var $btn = $(e.currentTarget),
+                $form = $btn.closest('form'),
+                postData = $form.serializeObject()
+                ;
+
+            postData.action = $btn.attr('name');
+
+            $.ajax({
+                type: 'POST',
+                url: $form.attr('action'),
+                data: postData,
+                dataType: 'json',
+                success: function (response) {
+                    if (response.succes) {
+                        $.each(response.passwords, function (k, password) {
+                            var $passwordEl = $passwordTemplate.clone();
+                            $.each(password, function (k, v) {
+                                $passwordEl.find('[data-text="' + k + '"]').text(v);
+                            });
+                            $passwordContainer.append($passwordEl);
+                        });
+
+                        addEvent();
+                    }
+                }
+            });
+        });
+
+        $('[data-action="clear"]').on('click', function (e) {
+            $passwordContainer.empty();
+        });
+
+        $('[name="generate10"]').trigger('click');
+    })(jQuery);
+</script>
+</body>
 </html>
