@@ -173,7 +173,7 @@
                             $.each(password, function (k, v) {
                                 $passwordEl.find('[data-text="' + k + '"]').text(v);
                             });
-                            $passwordContainer.append($passwordEl);
+                            $passwordContainer.prepend($passwordEl);
                         });
 
                         addEvent();
