@@ -2,7 +2,7 @@
 
 class Password
 {
-    private $length = 8;
+    private $length = 12;
 
     private $charRanges = [
         'upper' => 'ABCDEFGHJKLMNPQRSTUVWXYZ',
